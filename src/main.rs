@@ -1,5 +1,3 @@
-use std::fs::File;
-use std::io::prelude::*;
 
 struct HangmanCanvas {
     grid: [[char; 14]; 8],
@@ -7,9 +5,8 @@ struct HangmanCanvas {
 
 impl HangmanCanvas {
     pub fn new() -> Result<HangmanCanvas, std::io::Error> {
-        let mut file = File::open("src/hangman.ascii")?;
-        let mut contents = String::new();
-        file.read_to_string(&mut contents)?;
+        let contents = std::fs::read_to_string("src/hangman.ascii")
+            .expect("Can't find hangman!");
 
         let mut grid = [[' '; 14] ; 8];
         for (x, line) in contents.lines().enumerate() {
