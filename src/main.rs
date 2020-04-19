@@ -62,9 +62,9 @@ impl HangmanCanvas {
         Ok(HangmanCanvas { grid, reveal_grid, reveals })
     }
 
-    /** print the grid at step n of game */
-    pub fn print(&self, num_losses: usize) {
-        let excludes = &self.reveals[0..num_losses].iter().flatten().collect::<Vec<_>>();
+    /** print the grid at the nth step of the game */
+    pub fn print_step(&self, step: usize) {
+        let excludes = &self.reveals[0..step].iter().flatten().collect::<Vec<_>>();
         let mut draw = self.grid.clone();
 
         for point in excludes.iter() {
@@ -79,7 +79,10 @@ impl HangmanCanvas {
         if n > 0 {
             println!("oh no you lost your {}!", REVEAL_STR[n - 1]);
         }
-        self.print(n);
+        self.print_step(n);
+        if n == STEPS {
+            println!("YOU LOSE! :(");
+        }
     }
 
     /** print an entire grid array */
@@ -97,8 +100,15 @@ impl HangmanCanvas {
 fn main() -> std::io::Result<()> {
     let canvas = HangmanCanvas::new()?;
 
-    for n in 0..=STEPS {
+    let mut wait_for_input = String::new();
+    let mut n = 0;
+    while n <= STEPS && wait_for_input != "x" {
+        println!("STEP {} of game:", n);
         canvas.loss(n);
+
+        n += 1;
+        std::io::stdin().read_line(&mut wait_for_input)
+            .expect("Failed to read line");
     }
 
     Ok(())
