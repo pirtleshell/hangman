@@ -83,6 +83,9 @@ impl HangmanCanvas {
         if n == STEPS {
             println!("YOU LOSE! :(");
         }
+        else {
+            println!();
+        }
     }
 
     /** print an entire grid array */
@@ -100,16 +103,19 @@ impl HangmanCanvas {
 fn main() -> std::io::Result<()> {
     let canvas = HangmanCanvas::new()?;
 
-    let mut wait_for_input = String::new();
+    let one_sec = std::time::Duration::from_millis(1000);
+
     let mut n = 0;
-    while n <= STEPS && wait_for_input != "x" {
+    while n <= STEPS {
         println!("STEP {} of game:", n);
         canvas.loss(n);
 
+        std::thread::sleep(one_sec);
         n += 1;
-        std::io::stdin().read_line(&mut wait_for_input)
-            .expect("Failed to read line");
     }
+
+    let mut input = String::new();
+    std::io::stdin().read_line(&mut input).expect("failed to read");
 
     Ok(())
 }
