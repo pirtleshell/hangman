@@ -4,6 +4,8 @@ this isn't actually a hangman game. it's a cli that will print ascii drawings of
 
 is it overkill? probably. would it have been easier to just make ascii slides that get printed? definitely! but was it a fun learning experience to design and write? you bet!
 
+![](hangman_demo.gif)
+
 
 ## how it works
 
