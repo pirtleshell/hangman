@@ -1,12 +1,12 @@
-mod canvas;
+mod hcanvas;
 
 fn main() -> std::io::Result<()> {
-    let hangman = canvas::HangmanCanvas::new()?;
+    let hangman = hcanvas::HangmanCanvas::new()?;
 
     let one_sec = std::time::Duration::from_millis(1000);
 
     let mut n = 0;
-    while n <= canvas::STEPS {
+    while n <= hcanvas::STEPS {
         println!("STEP {} of game:", n);
         hangman.loss(n);
 
