@@ -1,21 +1,68 @@
 mod hcanvas;
 
-fn main() -> std::io::Result<()> {
-    let hangman = hcanvas::HangmanCanvas::new()?;
+struct GameState {
+    goal: String,
+    guesses: Vec<char>,
+    misses: usize,
+    playing: bool,
+}
 
-    let one_sec = std::time::Duration::from_millis(1000);
+struct Hangman {
+    canvas: hcanvas::HangmanCanvas,
+    state: GameState,
+}
 
-    let mut n = 0;
-    while n <= hcanvas::STEPS {
-        println!("STEP {} of game:", n);
-        hangman.loss(n);
+impl Hangman {
+    pub fn new(goal: &str) -> Result<Hangman, std::io::Error> {
+        let canvas = hcanvas::HangmanCanvas::new()?;
 
-        std::thread::sleep(one_sec);
-        n += 1;
+        let mut state = GameState {
+            goal: goal.to_string(),
+            guesses: Vec::new(),
+            misses: 0,
+            playing: true,
+        };
+
+        Ok(Hangman { canvas, state })
     }
 
-    let mut input = String::new();
-    std::io::stdin().read_line(&mut input).expect("failed to read");
+    pub fn guess(&mut self, c: char) {
+        let lower = c.to_lowercase().next().unwrap();
+        if !self.state.guesses.contains(&lower) {
+            println!("you guessed '{}'", lower);
+            self.state.guesses.push(lower);
+        }
+        else {
+            println!("you already guessed {}!", lower);
+        }
+        println!("guessed chars: {:?}", self.state.guesses);
+    }
+
+    pub fn show(&self) {
+        self.canvas.print_step(self.state.misses);
+    }
+}
+
+
+fn main() -> std::io::Result<()> {
+    let mut hangman = Hangman::new("platypus")?;
+
+    while hangman.state.playing {
+        let mut guess = String::new();
+        std::io::stdin().read_line(&mut guess).expect("failed to read");
+
+        // guess length should be 2 including newline
+        if guess.len() == 1 {
+            println!("enter a guess!");
+        }
+        else if guess.len() > 2 {
+            println!("only one letter at a time!");
+        }
+        else {
+            let c = guess.chars().next().unwrap();
+            hangman.guess(c);
+        }
+    }
 
     Ok(())
 }
