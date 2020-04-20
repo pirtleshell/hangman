@@ -3,7 +3,7 @@ pub const STEPS: usize = 6;
 const COLS: usize = 14;
 const ROWS: usize = 8;
 const EMPTY: char = ' ';
-const REVEAL_STR: [&str; STEPS] = ["head", "body", "left arm", "right arm", "left leg", "right leg"];
+pub const REVEAL_STR: [&str; STEPS] = ["head", "body", "left arm", "right arm", "left leg", "right leg"];
 const REVEAL_SEQ: [char; STEPS] = ['H', 'B', 'L', 'R', 'l', 'r'];
 
 #[derive(Debug)]
@@ -64,7 +64,8 @@ impl HangmanCanvas {
 
     /** print the grid at the nth step of the game */
     pub fn print_step(&self, step: usize) {
-        let excludes = &self.reveals[0..step].iter().flatten().collect::<Vec<_>>();
+        let index = if step > STEPS { STEPS } else { step };
+        let excludes = &self.reveals[0..index].iter().flatten().collect::<Vec<_>>();
         let mut draw = self.grid.clone();
 
         for point in excludes.iter() {
@@ -72,20 +73,6 @@ impl HangmanCanvas {
         }
 
         HangmanCanvas::print_grid(draw);
-    }
-
-    /** print the grid and what parts you lost at step n of the game */
-    pub fn loss(&self, n: usize) {
-        if n > 0 {
-            println!("oh no you lost your {}!", REVEAL_STR[n - 1]);
-        }
-        self.print_step(n);
-        if n == STEPS {
-            println!("YOU LOSE! :(");
-        }
-        else {
-            println!();
-        }
     }
 
     /** print an entire grid array */
